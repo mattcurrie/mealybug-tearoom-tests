@@ -25,6 +25,17 @@
 INCLUDE "src/includes/hardware.inc"
 
 
+SECTION "wram", WRAM0
+
+counter::
+    ds 1
+
+
+SECTION "vblank", ROM0[$40]
+
+    jp vblank_handler     
+
+
 SECTION "lcdc", ROM0[$48]
 
     jp lcdc_handler     
@@ -43,15 +54,18 @@ main::
     di
     ld sp, $fffe
 
+    xor a
+    ld [counter], a
+
     call reset_registers
     call reset_oam
 
-    ; enable mode 2 lcdc interrupt
+    ; select mode 2 lcdc interrupt
     ld a, $20
     ldh [rSTAT], a
 
-    ; enable lcdc interrupt
-    ld a, $02
+    ; enable vblank and lcdc interrupts
+    ld a, $03
     ldh [rIE], a
 
     ; use the (r) logo as a sprite
@@ -81,6 +95,24 @@ nops:
     REPT 1200
     nop
     ENDR
+
+
+vblank_handler::
+
+    ; let it run for 10 frames
+    ld a, [counter]
+    inc a
+
+    cp 10
+    jp nz, .continue
+
+    ; source code breakpoint - good time to take a screenshot to compare
+    ld b,b
+
+.continue:
+
+    ld [counter], a
+    reti
 
 
 lcdc_handler::

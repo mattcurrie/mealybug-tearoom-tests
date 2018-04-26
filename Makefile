@@ -5,7 +5,7 @@ SOURCES  := $(wildcard $(SRCDIR)/*.s)
 OBJECTS  := $(SOURCES:$(SRCDIR)/%.s=$(OBJDIR)/%.o)
 ROMS  := $(SOURCES:$(SRCDIR)/%.s=$(OBJDIR)/%.gb)
 
-all: $(OBJDIR) $(ROMS) 
+all: $(OBJDIR) $(ROMS) zip
 
 $(OBJDIR):
 	@echo "Creating $(directory)..."
@@ -17,6 +17,10 @@ $(ROMS): $(OBJDIR)/%.gb : $(OBJDIR)/%.o
 
 $(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.s
 	rgbasm -o $@ $<
+
+zip:
+	rm mealybug-tearoom-tests.zip
+	cd build && zip ../mealybug-tearoom-tests.zip *.gb
 
 .PHONY: clean
 clean:
