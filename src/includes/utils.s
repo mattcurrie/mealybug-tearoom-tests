@@ -18,6 +18,8 @@
 ; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ; SOFTWARE.
 
+INCLUDE "src/includes/old_skool_outline_thick.s"
+
 
 wait_vblank::
     ldh a, [rLY]
@@ -81,4 +83,49 @@ oam_copy::
     ret
 
 
+copy_font::
+    ld hl, oldskooloutlinethick_tile_data
+    ld de, $8000
 
+.loop:
+    ld a, [hl+]
+    ld [de], a
+    inc de
+
+    bit 4, d     ; bit 4 will be set when value of d register is $90
+    jr z, .loop
+
+    ret
+
+
+fill_vram_9800::
+    ld hl, $9800
+
+.loop:   
+    ld [hl+], a
+    bit 2, h       ; bit 2 will be set when value of h register is $9c
+    jr z, .loop
+
+    ret
+
+
+fill_vram_9c00::
+    ld hl, $9c00
+
+.loop:   
+    ld [hl+], a
+    bit 5, h       ; bit 5 will be set when value of h register is $a0
+    jr z, .loop
+
+    ret    
+
+
+fill_vram_8000::
+    ld hl, $8000
+
+.loop:   
+    ld [hl+], a
+    bit 5, h       ; bit 5 will be set when value of h register is $90
+    jr z, .loop
+
+    ret    
