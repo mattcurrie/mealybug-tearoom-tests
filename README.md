@@ -11,6 +11,22 @@ Currently the tests focus on changes made to the PPU registers during STAT mode 
 
 These tests examine very specific PPU behaviour/timings, so will give different results on a DMG compared to a CGB. Currently there are only expected result screenshots for when running on a DMG.
 
+These tests are written to be easily automated. See the usage section below for details.
+
+## Screenshots
+
+Pictures are always interesting so here are some:
+
+![m3_background_palette_change](/expected/DMG-blob/m3_background_palette_change.png?raw=true "m3_background_palette_change")
+![m3_background_palette_change_sprites](/expected/DMG-blob/m3_background_palette_change_sprites.png?raw=true "m3_background_palette_change_sprites")
+![m3_lcdc_bit_1_change](/expected/DMG-blob/m3_lcdc_bit_1_change.png?raw=true "m3_lcdc_bit_1_change")
+![m3_sprite_palette_change](/expected/DMG-blob/m3_sprite_palette_change.png?raw=true "m3_sprite_palette_change")
+
+![m3_wx_4_change](/expected/DMG-blob/m3_wx_4_change.png?raw=true "m3_wx_4_change")
+![m3_wx_4_change_sprites](/expected/DMG-blob/m3_wx_4_change_sprites.png?raw=true "m3_wx_4_change_sprites")
+![m3_wx_5_change](/expected/DMG-blob/m3_wx_5_change.png?raw=true "m3_wx_5_change")
+![m3_wx_6_change](/expected/DMG-blob/m3_wx_6_change.png?raw=true "m3_wx_6_change")
+
 ## Requirements
 
 - RGBDS is required if you want to build the test ROMs yourself
