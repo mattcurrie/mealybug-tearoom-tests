@@ -18,6 +18,8 @@
 ; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ; SOFTWARE.
 
+SECTION "utils", ROMX, BANK[1]
+
 INCLUDE "src/includes/old_skool_outline_thick.s"
 
 
@@ -129,3 +131,14 @@ fill_vram_8000::
     jr z, .loop
 
     ret    
+
+
+; line 0 timing is different by 4 cycles, so jump only 
+; when on line 0
+; 24 cycles (or 28 cycles when LY = 0)
+line_0_fix: MACRO
+    ldh a, [rLY]
+    and a
+    jr nz, .target\@
+.target\@
+    ENDM
