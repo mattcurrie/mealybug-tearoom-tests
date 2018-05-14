@@ -94,7 +94,7 @@ copy_font::
     ld [de], a
     inc de
 
-    bit 4, d     ; bit 4 will be set when value of d register is $90
+    bit 3, d     ; bit 3 will be set when value of d register is $88
     jr z, .loop
 
     ret
