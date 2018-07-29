@@ -24,6 +24,8 @@ Pictures are always interesting so here are screenshots showing the expected res
 ![m3_lcdc_tile_sel_win_change](/expected/DMG-blob/m3_lcdc_tile_sel_win_change.png?raw=true "m3_lcdc_tile_sel_win_change")
 ![m3_lcdc_obj_en_change](/expected/DMG-blob/m3_lcdc_obj_en_change.png?raw=true "m3_lcdc_obj_en_change")
 ![m3_lcdc_bg_en_change](/expected/DMG-blob/m3_lcdc_bg_en_change.png?raw=true "m3_lcdc_bg_en_change")
+![m3_lcdc_obj_size_change](/expected/DMG-blob/m3_lcdc_obj_size_change.png?raw=true "m3_lcdc_obj_size_change")
+![m3_lcdc_obj_size_change_scx](/expected/DMG-blob/m3_lcdc_obj_size_change_scx.png?raw=true "m3_lcdc_obj_size_change_scx")
 ![m3_bgp_change](/expected/DMG-blob/m3_bgp_change.png?raw=true "m3_bgp_change")
 ![m3_bgp_change_sprites](/expected/DMG-blob/m3_bgp_change_sprites.png?raw=true "m3_bgp_change_sprites")
 ![m3_obp0_change](/expected/DMG-blob/m3_obp0_change.png?raw=true "m3_obp0_change")
