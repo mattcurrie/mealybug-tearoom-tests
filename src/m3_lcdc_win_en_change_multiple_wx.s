@@ -18,8 +18,14 @@
 ; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ; SOFTWARE.
 
-; Sets and resets bit 4 (TILE_SEL) of LCDC register during mode 3 with sprites
-; at different X coordinates
+; Toggles bit 5 (WIN_EN) of LCDC register several times during mode 3 with WX
+; set to the value of LY on each row.
+; Black portions of the screen are window pixels. Light grey are background pixels.
+; When the window is disabled during mode 3, the tile fetcher will read from the
+; background tiles instead of the window tiles at the start of the next tile 
+; fetcher cycle.  This means that when the window is turned on and off it will
+; always display a multiple of 8 pixels, except when the window begins off the
+; left edge of the screen.
 ; Initiated by STAT mode 2 LCDC interrupt in a field of NOPs.
 
 
@@ -73,42 +79,46 @@ main::
     ld a, $0
     call fill_vram_9800
 
-    ; map at $9c00 is filled with 0
-    ld a, $0
+    ; map at $9c00 is filled with 1
+    ld a, $1
     call fill_vram_9c00
 
-    ; white tile at index 0
-    xor a
-    ld c, 16
+    ; light grey tile at index 0
+    ld c, 8
     ld hl, $9000
 .tile_loop:
+    ld a, $ff
     ld [hl+], a
+
+    xor a
+    ld [hl+], a
+
     dec c
     jr nz, .tile_loop
 
-    ; black tile at index 0
+    ; black tile at index 1
     ld a, $ff
     ld c, 16
-    ld hl, $8000
 .tile_loop2:
     ld [hl+], a
     dec c
     jr nz, .tile_loop2
 
-    ; use the (r) logo as a sprite
-    ld hl, sprite_data 
-    ld c, 76 ; 19 sprites * 4
-    call oam_copy
+    ; turn the screen on, $9C00-$9FFF window tile map, window on, tile data $8000-$8FFF, 
+    ; bg tile map $9800-$9BFF, obj size 8*8, obj display off, bg display on
+    ld b, $e1
 
-    ; turn the screen on, $9800-$9BFF window tile map, window off, bg tile data $8800-$97FF, 
-    ; bg tile map $9800-$9BFF, obj size 8*8, obj display on, bg display on
-    ld b, $83
-
-    ; c has the same value, but with bit 4 set
+    ; c has the same value, but with bit 5 reset
     ld c, b
-    set 4, c
+    res 5, c
 
-    ld a, $ff
+    ld a, 7
+    ldh [rWX], a
+
+    ld a, 0
+    ldh [rWY], a
+
+    ld a, $e4
     ldh [rOBP0], a
 
     ld a, $e4
@@ -129,6 +139,7 @@ nops:
     nop
     ENDR
 
+    jp nops
 
 vblank_handler::
 
@@ -149,14 +160,15 @@ vblank_handler::
 
 
 lcdc_handler::
+
     ; 20 cycles interrupt dispatch + 12 cycles to jump here: 32
 
     line_0_fix 
 
+    ldh a, [rLY]
+    ldh [rWX], a
 
-    REPT 9
     nop
-    ENDR    
 
     ; set the new value: 8 cycles
     ld [hl], c
@@ -164,33 +176,20 @@ lcdc_handler::
     ; restore old value
     ld [hl], b
 
+    nop
+    nop
+    nop
+
+    ; set the new value: 8 cycles
+    ld [hl], c
+
+    ; restore old value
+    ld [hl], b
+
+
     ; reset the return address to the top of the nops loop
     pop de
     ld de, nops
     push de
 
     reti
-
-
-sprite_data::
-
-    DB $10, 00, $19, 0
-    DB $18, 01, $19, 0
-    DB $20, 02, $19, 0
-    DB $28, 03, $19, 0
-    DB $30, 04, $19, 0
-    DB $38, 05, $19, 0
-    DB $40, 06, $19, 0
-    DB $48, 07, $19, 0
-    DB $50, 08, $19, 0
-    DB $58, 09, $19, 0
-    DB $60, 10, $19, 0
-    DB $68, 11, $19, 0
-    DB $70, 12, $19, 0
-    DB $78, 13, $19, 0
-    DB $80, 14, $19, 0
-    DB $88, 15, $19, 0
-    DB $90, 16, $19, 0
-    DB $98, 17, $19, 0
-
-

@@ -20,6 +20,17 @@
 
 ; Turns bit 5 (WIN_EN) of LCDC register on and off multiple times 
 ; during mode 3. 
+; If WX is set to activate at a pixel that has not been drawn yet, and WIN_EN
+; is toggled then the window can be turned on and off multiple times on a single
+; row, with background tiles displaying in between.
+; The current row of the window is incremented each time the window is activated,
+; so the second time the window is activated on the row, the next row of window
+; pixels are displayed.
+; When the window is disabled during mode 3, the tile fetcher will read from the
+; background tiles instead of the window tiles at the start of the next tile 
+; fetcher cycle.  This means that when the window is turned on and off it will
+; always display a multiple of 8 pixels, except when the window begins off the
+; left edge of the screen.
 ; Initiated by STAT mode 2 LCDC interrupt in a field of NOPs.
 
 

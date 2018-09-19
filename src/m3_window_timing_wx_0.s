@@ -18,8 +18,10 @@
 ; OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 ; SOFTWARE.
 
-; Sets and resets bit 4 (TILE_SEL) of LCDC register during mode 3 with sprites
-; at different X coordinates
+; WX is set to 0. On each row, SCX is set to the value of LY, and then the 
+; background palette is changed to black during mode 3.
+; The stair pattern is visible due to the delay from the lowest 3 bits of SCX, 
+; and due to window activating one T-cycle later when WX = 0 and SCX > 0.
 ; Initiated by STAT mode 2 LCDC interrupt in a field of NOPs.
 
 
@@ -73,49 +75,46 @@ main::
     ld a, $0
     call fill_vram_9800
 
-    ; map at $9c00 is filled with 0
-    ld a, $0
+    ; map at $9c00 is filled with 1
+    ld a, $1
     call fill_vram_9c00
 
-    ; white tile at index 0
-    xor a
-    ld c, 16
+    ; light grey tile at index 0
+    ld c, 8
     ld hl, $9000
 .tile_loop:
+    ld a, $ff
     ld [hl+], a
+
+    xor a
+    ld [hl+], a
+
     dec c
     jr nz, .tile_loop
 
-    ; black tile at index 0
+    ; black tile at index 1
     ld a, $ff
     ld c, 16
-    ld hl, $8000
 .tile_loop2:
     ld [hl+], a
     dec c
     jr nz, .tile_loop2
 
-    ; use the (r) logo as a sprite
-    ld hl, sprite_data 
-    ld c, 76 ; 19 sprites * 4
-    call oam_copy
 
-    ; turn the screen on, $9800-$9BFF window tile map, window off, bg tile data $8800-$97FF, 
-    ; bg tile map $9800-$9BFF, obj size 8*8, obj display on, bg display on
-    ld b, $83
+    ; turn the screen on, $9800-$9BFF window tile map, window on, tile data $8000-$8FFF, 
+    ; bg tile map $9800-$9BFF, obj size 8*8, obj display off, bg display on
+    ld a, $e1
+    ld [rLCDC], a
 
-    ; c has the same value, but with bit 4 set
-    ld c, b
-    set 4, c
+    xor a
+    ldh [rWX], a
+    ldh [rWY], a
 
-    ld a, $ff
-    ldh [rOBP0], a
+    ; load hl with address of BGP register
+    ld hl, rBGP
 
-    ld a, $e4
-    ldh [rBGP], a
-
-    ; load hl with address of LCDC register
-    ld hl, rLCDC
+    ld b, 0
+    ld c, $ff
 
     ; set initial value
     ld [hl], b
@@ -129,6 +128,7 @@ nops:
     nop
     ENDR
 
+    jp nops
 
 vblank_handler::
 
@@ -140,7 +140,7 @@ vblank_handler::
     jp nz, .continue
 
     ; source code breakpoint - good time to take a screenshot to compare
-    ld b,b
+    ld b, b
 
 .continue:
 
@@ -149,20 +149,23 @@ vblank_handler::
 
 
 lcdc_handler::
+
     ; 20 cycles interrupt dispatch + 12 cycles to jump here: 32
 
     line_0_fix 
 
+    ldh a, [rLY]
+    ldh [rSCX], a
 
-    REPT 9
+    ld [hl], b
+
     nop
-    ENDR    
+    nop
+    nop
 
     ; set the new value: 8 cycles
     ld [hl], c
 
-    ; restore old value
-    ld [hl], b
 
     ; reset the return address to the top of the nops loop
     pop de
@@ -170,27 +173,3 @@ lcdc_handler::
     push de
 
     reti
-
-
-sprite_data::
-
-    DB $10, 00, $19, 0
-    DB $18, 01, $19, 0
-    DB $20, 02, $19, 0
-    DB $28, 03, $19, 0
-    DB $30, 04, $19, 0
-    DB $38, 05, $19, 0
-    DB $40, 06, $19, 0
-    DB $48, 07, $19, 0
-    DB $50, 08, $19, 0
-    DB $58, 09, $19, 0
-    DB $60, 10, $19, 0
-    DB $68, 11, $19, 0
-    DB $70, 12, $19, 0
-    DB $78, 13, $19, 0
-    DB $80, 14, $19, 0
-    DB $88, 15, $19, 0
-    DB $90, 16, $19, 0
-    DB $98, 17, $19, 0
-
-
