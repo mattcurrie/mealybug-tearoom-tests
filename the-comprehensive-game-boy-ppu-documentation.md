@@ -25,9 +25,12 @@ The value of this bit can be written to at any time.
 
 On the CGB, there is strange behaviour if the value of this bit changes on particular T-cycles of the background tile data fetch. The following behaviour has been observed:
 
-- Using bitplane 1 data from most recently drawn sprite as bitplane data
-- Using the tile index as bitplane data (excluding CPU-CGB-D)
-- Using bitplane 0 data instead of bitplane 1 data (only CPU-CGB-D)
+- On all CGB revisions, settting `TILE_SEL` on the same T-cycle as a bitplane data read will cause it to use either:
+  - bitplane 1 data from the most recently drawn sprite as bitplane data, if any, or
+  - bitplane 1 data from the most recently drawn tile as when `TILE_SEL` was last reset, if any, or
+  - bitplane ? data from the last tile on the previous row. Condition for this rule TBD... perhaps due to where the tile fetcher is interrupted while drawing the previous row of pixels. Different on different CGB revisions.
+- On all CGB revisions, excluding CPU CGB D, resetting `TILE_SEL` on the same T-cycle as a bitplane data read will cause the tile index to be instead used as the data for that bitplane.
+- On CPU CGB D, resetting `TILE_SEL` on the same T-cycle as the bitplane 1 data read will cause the PPU to instead read the bitplane data from the address for bitplane 0.
 
 
 ### SCY `$FF42`
