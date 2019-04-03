@@ -28,10 +28,20 @@ On the CGB, there is strange behaviour if the value of this bit changes on parti
 - On all CGB revisions, setting `TILE_SEL` on the same T-cycle as a bitplane data read will cause it to use either:
   - bitplane 1 data from the most recently drawn sprite as bitplane data, if any, or
   - bitplane 1 data from the most recently drawn tile as when `TILE_SEL` was last reset, if any, or
-  - bitplane 0 or 1 data from the read in progress during pixel 159 on the previous row when the tile fetcher is interrupted. The timing of which bitplane is selected differs between CGB revisions.
-- On all CGB revisions, excluding CPU CGB D, resetting `TILE_SEL` on the same T-cycle as a bitplane data read will cause the tile index to be instead used as the data for that bitplane.
+  - bitplane 0 or 1 data from the read in progress during pixel 159/160 (?) on the previous row when the tile fetcher is interrupted. The timing of which bitplane is selected differs between CGB revisions.
+- On all CGB revisions, excluding CPU CGB D, resetting `TILE_SEL` on the same T-cycle as a bitplane data read will cause the **tile index** to be instead used as the data for that bitplane.
 - On CPU CGB D, resetting `TILE_SEL` on the same T-cycle as the bitplane 1 data read will cause the PPU to instead read the bitplane data from the address for bitplane 0.
 
+#### WIN_EN (bit 5)
+
+If WIN_EN is set then the window will be displayed when the WX and WY conditions are satisifed.
+
+Obscure behavior:
+
+- WIN_EN can be disabled during mode 3.  The disabling will take effect at the end of the current window tile being drawn. When the current window tile has finished being drawn, the PPU will start drawing background tiles again.
+- When the background resumes drawing it is on a tile boundary. The low 3 bits of SCX have no effect. 
+- Setting WIN_EN again during mode 3 on the same scanline will have no effect unless WX has been updated to set the window to activate on a pixel that hasn't been drawn yet.
+- If WX has been updated correctly and WIN_EN is set again then the PPU stops drawing the background, and will activate the window again, but it will start drawing the **next row** of the window, on the same scanline.
 
 ### SCY `$FF42`
 
