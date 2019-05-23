@@ -143,6 +143,9 @@ ENDR
     call print_value
     call hoamdma
 
+    ; source code breakpoint - good time to take a screenshot to compare
+    ld b,b
+
 .done
     jr .done
 
