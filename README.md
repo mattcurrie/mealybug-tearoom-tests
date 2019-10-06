@@ -9,14 +9,15 @@ This project contains some test ROMs I wrote to verify the correctness of my Gam
 
 Currently the tests focus on changes made to the PPU registers during STAT mode 3. This allows you to verify correct timing of the background tile and sprite data fetches as each scanline is rendered.
 
-These tests examine very specific PPU behaviour/timings, so will give different results on a DMG compared to a CGB. Currently there are only expected result screenshots for when running on a DMG.
+These tests examine very specific PPU behaviour/timings, so produce different results on a DMG compared to a CGB. There are expected result screenshots for when running on a DMG, and CPU CGB C and CPU CGB D (for most tests).
 
 These tests are written to be easily automated. See the usage section below for details.
 
 ## Screenshots
 
-Pictures are always interesting so here are screenshots showing the expected results:
+Pictures are always interesting so here are some screenshots showing the expected results on DMG:
 
+![m2_win_en_toggle](/expected/DMG-blob/m2_win_en_toggle.png?raw=true "m2_win_en_toggle")
 ![m3_lcdc_bg_map_change](/expected/DMG-blob/m3_lcdc_bg_map_change.png?raw=true "m3_lcdc_bg_map_change")
 ![m3_lcdc_tile_sel_change](/expected/DMG-blob/m3_lcdc_tile_sel_change.png?raw=true "m3_lcdc_tile_sel_change")
 ![m3_lcdc_win_map_change](/expected/DMG-blob/m3_lcdc_win_map_change.png?raw=true "m3_lcdc_win_map_change")
@@ -34,6 +35,8 @@ Pictures are always interesting so here are screenshots showing the expected res
 ![m3_bgp_change_sprites](/expected/DMG-blob/m3_bgp_change_sprites.png?raw=true "m3_bgp_change_sprites")
 ![m3_obp0_change](/expected/DMG-blob/m3_obp0_change.png?raw=true "m3_obp0_change")
 ![m3_scx_low_3_bits](/expected/DMG-blob/m3_scx_low_3_bits.png?raw=true "m3_scx_low_3_bits")
+![m3_scx_high_5_bits](/expected/DMG-blob/m3_scx_high_5_bits.png?raw=true "m3_scx_high_5_bits")
+![m3_scy_change](/expected/DMG-blob/m3_scy_change.png?raw=true "m3_scy_change")
 ![m3_wx_4_change](/expected/DMG-blob/m3_wx_4_change.png?raw=true "m3_wx_4_change")
 ![m3_wx_4_change_sprites](/expected/DMG-blob/m3_wx_4_change_sprites.png?raw=true "m3_wx_4_change_sprites")
 ![m3_wx_5_change](/expected/DMG-blob/m3_wx_5_change.png?raw=true "m3_wx_5_change")
@@ -48,8 +51,11 @@ Pictures are always interesting so here are screenshots showing the expected res
 ## Usage
 
 - Clone or download the project and run ```make``` from the root directory. The test ROMs will be placed in the ```build``` directory.  You can also download an [archive of the ROMs](mealybug-tearoom-tests.zip).
-- Check the results. You can check in the ```expected``` directory for screenshots from my Game Boy emulator (which I believe to be correct), and the ```photos``` directory contains blurry photos of the ROMs running on real devices. My logic analyzer is in the post so I can try [capturing screenshots from the real device](https://github.com/svendahlstrand/game-boy-lcd-sniffing) :)
-- Automated testing can be achieved using the ```compare``` command from imagemagick to get the number of pixels that are different when comparing the expected image to a screenshot from an emulator.  The screenshot from the emulator can be generated when the ```LD B,B``` software breakpoint is encountered. The screenshot from the emulator should use these colour values in greyscale images or in RGB components to ensure the images can be compared correctly: ```$00```, ```$55```, ```$AA```, ```$FF``` 
+- Check the results. You can check in the ```expected``` directory for screenshots from my Game Boy emulator (which I believe to be correct), and the ```photos``` directory contains blurry photos of the ROMs running on real devices. 
+- Automated testing can be achieved using the ```compare``` command from imagemagick to get the number of pixels that are different when comparing the expected image to a screenshot from an emulator.  
+- The screenshot from the emulator should be generated when the ```LD B,B``` software breakpoint is encountered. 
+- A DMG emulator should use these 8-bit values in greyscale images or in RGB components to ensure the images can be compared correctly: ```$00```, ```$55```, ```$AA```, ```$FF``` 
+- A CGB emulator should use this formula to convert 5-bit CGB palette components to 8-bit: ```(r << 3) | (r >> 2)```
 
   An example imagemagick compare command is below. ```result``` will contain the number of pixels that differ between the two images, so ```0``` indicates success.
 
