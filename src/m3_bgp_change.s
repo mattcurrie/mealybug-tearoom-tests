@@ -79,7 +79,7 @@ main::
     ei
 
 
-nops:
+nop_slide:
     REPT 1200
     nop
     ENDR
@@ -164,7 +164,7 @@ lcdc_handler::
 
     ; set the return address to the top of the nops
     pop hl
-    ld hl, nops
+    ld hl, nop_slide
     push hl
 
     reti

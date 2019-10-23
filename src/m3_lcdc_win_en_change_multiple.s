@@ -133,12 +133,12 @@ main::
     ei
 
 
-nops:
+nop_slide:
     REPT 1200
     nop
     ENDR
 
-    jp nops
+    jp nop_slide
 
 vblank_handler::
 
@@ -196,7 +196,7 @@ lcdc_handler::
 
     ; reset the return address to the top of the nops loop
     pop de
-    ld de, nops
+    ld de, nop_slide
     push de
 
     reti
