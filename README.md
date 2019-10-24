@@ -41,6 +41,13 @@ Pictures are always interesting so here are some screenshots showing the expecte
 ![m3_wx_4_change_sprites](/expected/DMG-blob/m3_wx_4_change_sprites.png?raw=true "m3_wx_4_change_sprites")
 ![m3_wx_5_change](/expected/DMG-blob/m3_wx_5_change.png?raw=true "m3_wx_5_change")
 ![m3_wx_6_change](/expected/DMG-blob/m3_wx_6_change.png?raw=true "m3_wx_6_change")
+![m3_lcdc_bg_en_change2](/expected/CPU%20CGB%20C/m3_lcdc_bg_en_change2.png?raw=true "m3_lcdc_bg_en_change2")
+![m3_lcdc_bg_map_change2](/expected/CPU%20CGB%20C/m3_lcdc_bg_map_change2.png?raw=true "m3_lcdc_bg_map_change2")
+![m3_lcdc_tile_sel_change2](/expected/CPU%20CGB%20C/m3_lcdc_tile_sel_change2.png?raw=true "m3_lcdc_tile_sel_change2")
+![m3_lcdc_tile_sel_win_change2](/expected/CPU%20CGB%20C/m3_lcdc_tile_sel_win_change2.png?raw=true "m3_lcdc_tile_sel_win_change2")
+![m3_lcdc_win_map_change2](/expected/CPU%20CGB%20C/m3_lcdc_win_map_change2.png?raw=true "m3_lcdc_win_map_change2")
+![m3_scx_high_5_bits_change2](/expected/CPU%20CGB%20C/m3_scx_high_5_bits_change2.png?raw=true "m3_scx_high_5_bits_change2")
+![m3_scy_change2](/expected/CPU%20CGB%20C/m3_scy_change2.png?raw=true "m3_scy_change2")
 
 ## Requirements
 
