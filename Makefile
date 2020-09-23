@@ -1,27 +1,35 @@
 SRCDIR   = src
-OBJDIR   = build
+OBJDIR   = .o
+DEPDIR   = .d
+BINDIR   = build
 
-SOURCES  := $(wildcard $(SRCDIR)/*.s)
+SOURCES  := $(wildcard $(SRCDIR)/*.s) $(wildcard $(SRCDIR)/*/*.s)
 OBJECTS  := $(SOURCES:$(SRCDIR)/%.s=$(OBJDIR)/%.o)
-ROMS  := $(SOURCES:$(SRCDIR)/%.s=$(OBJDIR)/%.gb)
+DEPS  := $(SOURCES:$(SRCDIR)/%.s=$(DEPDIR)/%.d)
+ROMS  := $(SOURCES:$(SRCDIR)/%.s=$(BINDIR)/%.gb)
 
-all: $(OBJDIR) $(ROMS) zip
+all: $(ROMS)
 
-$(OBJDIR):
-	@echo "Creating $(directory)..."
-	mkdir -p $@
-
-$(ROMS): $(OBJDIR)/%.gb : $(OBJDIR)/%.o
+$(ROMS): $(BINDIR)/%.gb : $(OBJDIR)/%.o
+	@mkdir -p $(@D)
 	rgblink -n $(basename $@).sym -m $(basename $@).map -o $@ $<
 	rgbfix -v -p 255 $@
 
 $(OBJECTS): $(OBJDIR)/%.o : $(SRCDIR)/%.s
-	rgbasm -o $@ $<
+	@mkdir -p $(@D)
+	@mkdir -p $(@D:$(OBJDIR)/%=$(DEPDIR)/%)
+	rgbasm -i mgblib/ -M $(DEPDIR)/$*.d -o $@ $<
+
+$(DEPS):
+
+include $(wildcard $(DEPS))
 
 zip:
 	rm mealybug-tearoom-tests.zip
-	cd build && zip ../mealybug-tearoom-tests.zip *.gb
+	cd build && zip -r ../mealybug-tearoom-tests.zip . -i *.gb *.sym
 
 .PHONY: clean
 clean:
 	rm -rf $(OBJDIR)
+	rm -rf $(DEPDIR)
+	rm -rf $(BINDIR)
