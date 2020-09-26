@@ -21,7 +21,7 @@
 ; Tests enabling LCDC bit 6 but not bit 0
 
 
-INCLUDE "src/includes/hardware.inc"
+INCLUDE "inc/hardware.inc"
 
 
 SECTION "vblank", ROM0[$40]
@@ -289,4 +289,4 @@ woam::
 
 
 
-INCLUDE "src/includes/utils.s"
+INCLUDE "inc/utils.s"
