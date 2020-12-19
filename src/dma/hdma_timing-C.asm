@@ -23,9 +23,9 @@
 ; using DIV.
 
 ; Verified results:
-;   pass: CGB 0/B/C/D/E, AGB 0/B
+;   pass: CGB, AGB 0/A/B/BE
 ;   fail: DMG, MGB, SGB, SGB2
-;   untested: CGB A, AGB A/BE
+;   untested: AGB AE
 
 TITLE equs "hdma_timing-C"
 REQUIRES_CGB = 1
