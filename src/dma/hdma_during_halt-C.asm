@@ -43,8 +43,8 @@ CorrectResults::
     DB $03, $04, $05, $06   ; LY
     DB $c6, $c2, $c2, $c2   ; STAT
     DB $01, $00, $ff, $ff   ; HDMA5
-    DB $11, $be, $be, $be   ; $980f
-    DB $22, $22, $ef, $ef   ; $981f
+    DB $11, $be, $be, $ff   ; $980f
+    DB $22, $22, $ef, $ff   ; $981f
 
 
 SECTION "source-data", WRAM0, ALIGN[8]
