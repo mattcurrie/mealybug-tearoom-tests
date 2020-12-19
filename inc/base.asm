@@ -21,7 +21,7 @@
 SECTION "lib", ROMX
 INCLUDE "mgblib/src/hardware.inc"
 INCLUDE "mgblib/src/macros.asm"
-IF DEF(REQUIRES_CGB)
+IF DEF(REQUIRES_CGB) | ! DEF(USE_DMG_MODE)
     enable_cgb_mode
 ENDC
 INCLUDE "mgblib/src/old_skool_outline_thick.asm"
@@ -47,12 +47,13 @@ POPS
 ; @param a the value to store
 ; @param de the address to store the value
 ; @return de + 1
-; @destroys f, hl
+; @destroys af
 store_result: MACRO
     ld [de], a
     inc de
-    ld hl, ResultCounter
-    inc [hl]
+    ld a, [ResultCounter]
+    inc a
+    ld [ResultCounter], a
     ENDM
 
 
@@ -61,8 +62,11 @@ SECTION "boot", ROM0[$100]
     nop
     jp Main
 
+SECTION "header-remainder", ROM0[$14a]
+    ds $150-@, $0
 
-SECTION "main", ROM0[$150]
+
+SECTION "main", ROMX
 Main::
     di
     ld sp, $fffe
@@ -91,6 +95,15 @@ ENDC
 
     ld de, TestTitle
     call PrintString
+
+    ld a, [wPrintCursorAddress]
+    and $1f
+    jr z, .skip_extra_new_line
+    print_string_literal "\\n"
+.skip_extra_new_line::
+
+    print_string_literal "\\n"
+
 IF DEF(DISPLAY_RESULTS_ONLY)
     call DisplayResults
 ELSE
@@ -113,8 +126,6 @@ NotCGB::
 ; @param [CorrectResults] the correct results
 ; @param [ResultCounter] number of results to compare
 CompareResults::
-    print_string_literal "\\n\\n"
-
     ld a, "P"
     ld [TestResult], a
 
@@ -189,8 +200,6 @@ CompareResults::
 ; Display the results only without comparing
 ; to any values
 DisplayResults::
-    print_string_literal "\\n\\n"
-
     ld hl, Results
     ld a, [ResultCounter]
     ld c, a
